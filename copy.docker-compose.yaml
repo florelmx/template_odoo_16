@@ -1,8 +1,8 @@
 version: '3.1'
 services:
   web:
-    container_name: ${WEB_HOST}
-    image: ${WEB_IMAGE_NAME}:${WEB_IMAGE_TAG}
+    container_name: ${WEB_IMAGE_NAME}
+    image: oddo:${WEB_IMAGE_TAG}
     build: ./
     depends_on:
       - db
@@ -13,20 +13,18 @@ services:
       - ./config:/etc/odoo
       - ./addons:/mnt/extra-addons
       - ./addons-customize:/mnt/extra-addons-customize
+      - ./logs:/var/log/odoo
     environment:
-      - POSTGRES_HOST=${DB_HOST}
-      - POSTGRES_PORT=${DB_PORT}
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWD}
-      - PASSWORD_FILE=${DB_PASSWD}
+      - HOST=db
+      - USER=${DB_USER}
+      - PASSWORD=${DB_PASSWD}
   db:
-    container_name: ${DB_HOST}
-    image: ${DB_IMAGE}:${DB_TAG}
+    container_name: postgres_odoo
+    image: postgres:latest
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_PASSWORD=${DB_PASSWD}
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWD}
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "${DB_PORT}:5432"
